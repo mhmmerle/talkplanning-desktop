@@ -1,20 +1,16 @@
 package email.haemmerle.talkplanning
 
+import email.haemmerle.talkplanning.ui.MainView
 import tornadofx.*
 import kotlin.test.Test
 
 class TornadoFXTest {
 
-    @Test fun canCreateView() {
-        launch<MyApp>()
+    @Test
+    fun canCreateView() {
+        launch<Talkplanning>()
     }
 
-    class MyApp: App(MyView::class)
-
-    class MyView: View() {
-        override val root = vbox {
-            button("Press me")
-            label("Waiting")
-        }
-    }
+    class Talkplanning : App(MainView::class)
 }
+

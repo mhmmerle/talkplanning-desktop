@@ -28,12 +28,14 @@ dependencies {
     runtimeOnly("org.jetbrains.exposed", "exposed-core", "0.18.1")
     implementation("org.jetbrains.exposed", "exposed-dao", "0.18.1")
     implementation("org.jetbrains.exposed", "exposed-jdbc", "0.18.1")
+    implementation( "org.koin:koin-core:2.0.1")
 
     //testImplementation("org.junit.jupiter:junit-jupiter-api")
     //testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("org.assertj:assertj-core:3.11.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation( "org.koin:koin-test:2.0.1")
 }
 
 java {
