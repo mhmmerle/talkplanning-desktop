@@ -1,12 +1,13 @@
 package email.haemmerle.talkplanning.ui
 
 import email.haemmerle.talkplanning.ui.search.CongregationForm
+import email.haemmerle.talkplanning.ui.search.PublisherForm
 import email.haemmerle.talkplanning.ui.search.SearchView
+import email.haemmerle.talkplanning.ui.search.TalkForm
 import tornadofx.*
 
 class MainView : View() {
     val searchView : SearchView by di()
-    val congregationForm : CongregationForm by di()
 
     override val root = borderpane {
         primaryStage.minWidth = 600.0
@@ -15,7 +16,7 @@ class MainView : View() {
         left = listmenu {
             useMaxSize = true
             item(text = "Kalender")
-            item(text = "Suche")
+            item(text = "Suche").whenSelected { showSearch() }
             item(text = "Vortrag planen")
         }
         center = searchView.root
@@ -23,11 +24,19 @@ class MainView : View() {
 
     fun showSearch() {
         root.center = searchView.root
-        searchView.update()
+        searchView.showSearchResults()
     }
 
     fun showCreateCongregation() {
-        root.center = congregationForm.root
+        root.center = CongregationForm().root
+    }
+
+    fun showCreatePublisher() {
+        root.center = PublisherForm().root
+    }
+
+    fun showCreateTalk() {
+        root.center = TalkForm().root
     }
 }
 

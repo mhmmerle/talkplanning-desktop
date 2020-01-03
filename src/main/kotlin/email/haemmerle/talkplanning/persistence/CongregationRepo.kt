@@ -7,6 +7,8 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -27,8 +29,19 @@ class H2CongregationRepo : CongregationRepo {
     override fun findAll(): List<Congregation> {
         return transaction {
             return@transaction CongregationTable.selectAll().toList()
-                    .map { Congregation(it[CongregationTable.name]) }
+                    .map { Congregation(it[CongregationTable.name], it[CongregationTable.id].value) }
         }
+    }
+
+    override fun get(congregationId: Int): Congregation {
+        return transaction {
+            val result = CongregationTable.select{CongregationTable.id.eq(congregationId)}.single()
+            return@transaction Congregation(result[CongregationTable.name], result[CongregationTable.id].value)
+        }
+    }
+
+    override fun delete(congregationId: Int) {
+        transaction { CongregationTable.deleteWhere { CongregationTable.id.eq(congregationId) } }
     }
 }
 

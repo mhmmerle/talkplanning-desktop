@@ -2,12 +2,12 @@ package email.haemmerle.talkplanning.ui.search
 
 import email.haemmerle.talkplanning.model.Congregation
 import email.haemmerle.talkplanning.model.CongregationRepo
+import email.haemmerle.talkplanning.ui.mainView
 import email.haemmerle.talkplanning.ui.textField
 import javafx.beans.property.SimpleStringProperty
-import email.haemmerle.talkplanning.ui.mainView
 import tornadofx.*
 
-class CongregationForm(val congregationModel : CongregationModel = CongregationModel()) : View() {
+class CongregationForm(val congregationModel: CongregationModel = CongregationModel()) : View() {
     val congregationRepo: CongregationRepo by di()
 
     override val root = form {
@@ -15,7 +15,14 @@ class CongregationForm(val congregationModel : CongregationModel = CongregationM
             textField(congregationModel.name)
         }
         buttonbar {
-            button("Speichern").action {
+            button("Abbrechen") {
+                isCancelButton = true
+            }.action {
+                mainView.showSearch()
+            }
+            button("Speichern") {
+                isDefaultButton = true
+            }.action {
                 congregationRepo.save(Congregation(congregationModel.name.value))
                 mainView.showSearch()
             }
@@ -23,6 +30,6 @@ class CongregationForm(val congregationModel : CongregationModel = CongregationM
     }
 }
 
-class CongregationModel (name : String = ""){
+class CongregationModel(name: String = "") {
     val name = SimpleStringProperty(this, "Name", name)
 }

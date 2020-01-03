@@ -1,7 +1,11 @@
 package email.haemmerle.talkplanning
 
 import email.haemmerle.talkplanning.model.CongregationRepo
+import email.haemmerle.talkplanning.model.PublisherRepo
+import email.haemmerle.talkplanning.model.TalkRepo
 import email.haemmerle.talkplanning.persistence.H2CongregationRepo
+import email.haemmerle.talkplanning.persistence.H2PublisherRepo
+import email.haemmerle.talkplanning.persistence.H2TalkRepo
 import email.haemmerle.talkplanning.ui.MainView
 import email.haemmerle.talkplanning.ui.search.CongregationForm
 import email.haemmerle.talkplanning.ui.search.SearchView
@@ -20,9 +24,10 @@ fun main(args: Array<String>) {
     startKoin {
         modules(module {
             single { H2CongregationRepo() as CongregationRepo }
+            single { H2PublisherRepo() as PublisherRepo }
+            single { H2TalkRepo() as TalkRepo }
             single { MainView() }
             single { SearchView() }
-            single { CongregationForm() }
         })
     }
     FX.dicontainer = object : DIContainer, KoinComponent {
@@ -30,7 +35,7 @@ fun main(args: Array<String>) {
             return getKoin().get(clazz = type, qualifier = null, parameters = null)
         }
     }
-    Database.connect("jdbc:h2:~/.talkplanning", driver = "org.h2.Driver")
+    Database.connect("jdbc:h2:~/.talkplanning;mode=MySQL", driver = "org.h2.Driver")
     launch<Talkplanning>(args)
 }
 
