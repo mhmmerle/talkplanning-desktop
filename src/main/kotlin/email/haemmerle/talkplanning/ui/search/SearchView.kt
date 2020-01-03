@@ -61,7 +61,7 @@ class SearchView : View() {
             }
             text("Verkündiger")
             publisherRepo.findAll().forEach {
-                button("Verkündiger ${it.firstName}  ${it.lastName} in ${congregationRepo.get(it.congregationId)}").action{
+                button("Verkündiger ${it.lastName}  ${it.firstName} in ${congregationRepo.find(it.congregationId)}").action{
                     showPublisher(it)
                 }
             }
@@ -70,17 +70,25 @@ class SearchView : View() {
 
     private fun showPublisher(publisher: Publisher) {
         detailPane.replaceChildren(vbox {
-            text("Verkündiger ${publisher.firstName} ${publisher.lastName}")
-            text("Versammlung ${congregationRepo.get(publisher.congregationId)}")
+            text("Verkündiger ${publisher.lastName} ${publisher.firstName}")
+            text("Versammlung ${congregationRepo.find(publisher.congregationId)}")
             text("Vorträge")
 
             publisher.getTalks().forEach {
                 val talk = talkRepo.find(it).apply{
                     text("$number - $title")
+                    button("Löschen") {
+                        action{
+                            publisher.removeTalk(this@apply)
+                            publisherRepo.save(publisher)
+                            showPublisher(publisher)
+                        }
+                    }
                 }
             }
 
-            form {
+            val addTalkForm = form {
+                hide()
                 fieldset {
                     val talkToAdd = SimpleObjectProperty<Talk>(talkRepo.findAll().first(), "Vortrag")
                     comboField(talkToAdd, talkRepo.findAll())
@@ -88,6 +96,7 @@ class SearchView : View() {
                         action {
                             publisher.addTalk(talkToAdd.value)
                             publisherRepo.save(publisher)
+                            showPublisher(publisher)
                         }
                     }
                 }
@@ -96,7 +105,7 @@ class SearchView : View() {
             buttonbar {
                 button ("Vortrag hinzufügen") {
                     action {
-
+                        addTalkForm.show()
                     }
                 }
                 button ("Löschen").action {
@@ -110,6 +119,11 @@ class SearchView : View() {
     private fun showCongregation(congregation: Congregation) {
         detailPane.replaceChildren(vbox{
             text("Versammlung ${congregation.name}")
+
+            text("Verkündiger")
+            publisherRepo.findFor(congregation.id!!).forEach {
+                text("${it.lastName} ${it.firstName}")
+            }
 
             buttonbar {
                 button ("Löschen") {

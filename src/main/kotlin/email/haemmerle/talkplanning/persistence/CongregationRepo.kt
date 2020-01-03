@@ -28,12 +28,12 @@ class H2CongregationRepo : CongregationRepo {
 
     override fun findAll(): List<Congregation> {
         return transaction {
-            return@transaction CongregationTable.selectAll().toList()
+            return@transaction CongregationTable.selectAll().orderBy(CongregationTable.name).toList()
                     .map { Congregation(it[CongregationTable.name], it[CongregationTable.id].value) }
         }
     }
 
-    override fun get(congregationId: Int): Congregation {
+    override fun find(congregationId: Int): Congregation {
         return transaction {
             val result = CongregationTable.select{CongregationTable.id.eq(congregationId)}.single()
             return@transaction Congregation(result[CongregationTable.name], result[CongregationTable.id].value)

@@ -2,14 +2,8 @@ package email.haemmerle.talkplanning.persistence
 
 import email.haemmerle.talkplanning.model.Publisher
 import email.haemmerle.talkplanning.model.PublisherRepo
-import org.jetbrains.exposed.dao.EntityID
 import org.jetbrains.exposed.dao.IntIdTable
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.statements.InsertStatement
-import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import org.jetbrains.exposed.sql.statements.UpdateStatement
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class H2PublisherRepo : PublisherRepo {
@@ -22,15 +16,16 @@ class H2PublisherRepo : PublisherRepo {
 
     override fun save(publisher: Publisher) {
         transaction {
-            PublisherTable.insertOrUpdate(publisher.id, {PublisherTable.id.eq(publisher.id)}) {
+            PublisherTable.insertOrUpdate(publisher.id, { PublisherTable.id.eq(publisher.id) }) {
                 it[firstName] = publisher.firstName
                 it[lastName] = publisher.lastName
                 it[congregationId] = publisher.congregationId
             }
-            PublisherTalksTable.deleteWhere { PublisherTalksTable.publisherId.eq(publisher.id!!) }
+            if (publisher.id == null) return@transaction
+            PublisherTalksTable.deleteWhere { PublisherTalksTable.publisherId.eq(publisher.id) }
             publisher.getTalks().forEach { talk ->
                 PublisherTalksTable.insert {
-                    it[publisherId] = publisher.id!!
+                    it[publisherId] = publisher.id
                     it[talkNumber] = talk
                 }
             }
@@ -39,16 +34,29 @@ class H2PublisherRepo : PublisherRepo {
 
     override fun findAll(): List<Publisher> {
         return transaction {
-            return@transaction PublisherTable.selectAll().toList()
-                    .map {
-                        Publisher(
-                                it[PublisherTable.firstName],
-                                it[PublisherTable.lastName],
-                                it[PublisherTable.congregationId],
-                                it[PublisherTable.id].value,
-                                findTalksOf(it[PublisherTable.id].value))
-                    }
+            return@transaction PublisherTable.selectAll()
+                    .orderBy(PublisherTable.lastName).orderBy(PublisherTable.firstName).toList()
+                    .map { it.toPublisher() }
         }
+    }
+
+    override fun findFor(congregationId: Int): List<Publisher> {
+        return transaction {
+            return@transaction PublisherTable
+                    .select { PublisherTable.congregationId.eq(congregationId) }.toList()
+                    .map { it.toPublisher() }
+        }
+    }
+
+
+    fun ResultRow.toPublisher(): Publisher {
+        return Publisher(
+                this[PublisherTable.firstName],
+                this[PublisherTable.lastName],
+                this[PublisherTable.congregationId],
+                this[PublisherTable.id].value,
+                findTalksOf(this[PublisherTable.id].value))
+
     }
 
     private fun findTalksOf(publisherId: Int): List<Int> {

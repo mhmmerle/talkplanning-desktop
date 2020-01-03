@@ -24,7 +24,7 @@ class H2TalkRepo : TalkRepo {
 
     override fun findAll(): List<Talk> {
         return transaction {
-            return@transaction TalkTable.selectAll().toList().map {
+            return@transaction TalkTable.selectAll().orderBy(TalkTable.number).toList().map {
                 Talk(it[TalkTable.number].value, it[TalkTable.title])
             }
         }

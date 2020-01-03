@@ -10,7 +10,7 @@ interface CongregationRepo {
 
     fun findAll(): List<Congregation>
 
-    fun get(congregationId: Int): Congregation
+    fun find(congregationId: Int): Congregation
 
     fun delete(id: Int)
 
