@@ -46,6 +46,9 @@ class SearchView : View() {
             item("Vortrag").action {
                 mainView.showCreateTalk()
             }
+            item("Einstellungen").action {
+                mainView.showSettings()
+            }
         })
     }
 

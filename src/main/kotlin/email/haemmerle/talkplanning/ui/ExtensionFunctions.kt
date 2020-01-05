@@ -47,3 +47,15 @@ fun EventTarget.numberField(property: SimpleIntegerProperty): Field {
         textfield(property).whenVisible { requestFocus() }
     }
 }
+
+fun EventTarget.h1(text : String) {
+    text(text) {
+        style { fontSize = Dimension(14.0, Dimension.LinearUnits.pt) }
+    }
+}
+
+fun EventTarget.h2(text : String) {
+    text(text) {
+        style { fontSize = Dimension(12.0, Dimension.LinearUnits.pt) }
+    }
+}

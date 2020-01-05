@@ -2,9 +2,11 @@ package email.haemmerle.talkplanning
 
 import email.haemmerle.talkplanning.model.CongregationRepo
 import email.haemmerle.talkplanning.model.PublisherRepo
+import email.haemmerle.talkplanning.model.SettingsRepo
 import email.haemmerle.talkplanning.model.TalkRepo
 import email.haemmerle.talkplanning.persistence.H2CongregationRepo
 import email.haemmerle.talkplanning.persistence.H2PublisherRepo
+import email.haemmerle.talkplanning.persistence.H2SettingsRepo
 import email.haemmerle.talkplanning.persistence.H2TalkRepo
 import email.haemmerle.talkplanning.ui.MainView
 import email.haemmerle.talkplanning.ui.search.CongregationForm
@@ -26,6 +28,7 @@ fun main(args: Array<String>) {
             single { H2CongregationRepo() as CongregationRepo }
             single { H2PublisherRepo() as PublisherRepo }
             single { H2TalkRepo() as TalkRepo }
+            single { H2SettingsRepo() as SettingsRepo }
             single { MainView() }
             single { SearchView() }
         })

@@ -1,9 +1,11 @@
 package email.haemmerle.talkplanning.ui
 
+import email.haemmerle.talkplanning.model.Settings
 import email.haemmerle.talkplanning.ui.search.CongregationForm
 import email.haemmerle.talkplanning.ui.search.PublisherForm
 import email.haemmerle.talkplanning.ui.search.SearchView
 import email.haemmerle.talkplanning.ui.search.TalkForm
+import email.haemmerle.talkplanning.ui.settings.SettingsForm
 import tornadofx.*
 
 class MainView : View() {
@@ -18,6 +20,7 @@ class MainView : View() {
             item(text = "Kalender")
             item(text = "Suche").whenSelected { showSearch() }
             item(text = "Vortrag planen")
+            item(text = "Einstellungen").whenSelected { showSettings() }
         }
         center = searchView.root
     }
@@ -37,6 +40,10 @@ class MainView : View() {
 
     fun showCreateTalk() {
         root.center = TalkForm().root
+    }
+
+    fun showSettings(settings: Settings? = null) {
+        root.center = SettingsForm(settings).root
     }
 }
 
